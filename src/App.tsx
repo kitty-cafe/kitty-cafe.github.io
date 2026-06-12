@@ -9,7 +9,17 @@ const translations = {
     line: "ไลน์",
     findUs: "มาหาเราได้ที่",
     address: "ถนนสายหลัก, เมืองไทย",
-    hours: "เปิดทุกวัน 09:00 – 22:00 น.",
+    hours: "เวลาทำการ",
+    hoursData: [
+      { day: "จันทร์", open: "09:00", close: "17:00" },
+      { day: "อังคาร", open: "09:00", close: "20:00" },
+      { day: "พุธ", open: "10:00", close: "18:00" },
+      { day: "พฤหัสบดี", open: "09:00", close: "18:00" },
+      { day: "ศุกร์", open: "09:00", close: "21:00" },
+      { day: "เสาร์", open: null, close: null },
+      { day: "อาทิตย์", open: "10:00", close: "17:00" },
+    ],
+    closed: "ปิด",
     categories: {
       spaghetti: "สปาเก็ตตี้",
       rice: "ข้าว",
@@ -71,7 +81,17 @@ const translations = {
     line: "Line",
     findUs: "Find Us Here",
     address: "Main Road, Thailand",
-    hours: "Open Daily 09:00 – 22:00",
+    hours: "Opening Hours",
+    hoursData: [
+      { day: "Mon", open: "09:00", close: "17:00" },
+      { day: "Tue", open: "09:00", close: "20:00" },
+      { day: "Wed", open: "10:00", close: "18:00" },
+      { day: "Thu", open: "09:00", close: "18:00" },
+      { day: "Fri", open: "09:00", close: "21:00" },
+      { day: "Sat", open: null, close: null },
+      { day: "Sun", open: "10:00", close: "17:00" },
+    ],
+    closed: "Closed",
     categories: {
       spaghetti: "Spaghetti",
       rice: "Rice",
@@ -129,8 +149,9 @@ const translations = {
 };
 
 // ── Replace with your real Line ID ──────────────────────────────────────────
-const LINE_ID = "YOUR_LINE_ID"; // e.g. "kittycafe_bkk"
+const LINE_ID = "meyou2801";
 const LINE_URL = `https://line.me/ti/p/~${LINE_ID}`;
+const SHOW_LINE = false; // ← set to true when you have the Line link ready
 // ────────────────────────────────────────────────────────────────────────────
 
 const LineIcon = ({ size = 16 }: { size?: number }) => (
@@ -268,6 +289,20 @@ export default function App() {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
+  // Set page title and emoji favicon once on mount
+  useEffect(() => {
+    document.title = "Kitty Cafe";
+    const favicon = document.querySelector<HTMLLinkElement>("link[rel~='icon']")
+      ?? (() => {
+        const el = document.createElement("link");
+        el.rel = "icon";
+        document.head.appendChild(el);
+        return el;
+      })();
+    favicon.href =
+      "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐱</text></svg>";
+  }, []);
+
   // Keep in sync with OS changes (if user hasn't manually overridden)
   const [manualOverride, setManualOverride] = useState(false);
   useEffect(() => {
@@ -326,48 +361,51 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* Header */}
-      <header className="site-header">
-        <div className="header-inner">
-          {/* Row 1: Brand */}
-          <div className="header-brand">
-            <span className="brand-icon">🐱</span>
-            <h1 className="brand-name">Kitty Cafe</h1>
-          </div>
+      {/* Sticky wrapper — keeps header and nav flush together */}
+      <div className="sticky-top">
+        <header className="site-header">
+          <div className="header-inner">
+            {/* Row 1: Brand */}
+            <div className="header-brand">
+              <span className="brand-icon">🐱</span>
+              <h1 className="brand-name">Kitty Cafe</h1>
+            </div>
 
-          {/* Row 2: Contact + toggles */}
-          <div className="header-contact">
-            <a href="tel:+66000000000" className="contact-pill">
-              📞 <span>{t.phone}: 000-000-0000</span>
-            </a>
-            <a
-              href={LINE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="contact-pill line-pill"
-            >
-              <LineIcon size={14} />
-              <span>{t.line}</span>
-            </a>
-            <button
-              className="theme-toggle"
-              onClick={toggleTheme}
-              aria-label="Toggle dark/light mode"
-            >
-              {theme === "dark" ? "☀️" : "🌙"}
-            </button>
-            <button
-              className="lang-toggle"
-              onClick={() => setLang(lang === "th" ? "en" : "th")}
-            >
-              {t.lang}
-            </button>
+            {/* Row 2: Contact + toggles */}
+            <div className="header-contact">
+              <a href="tel:+66981902677" className="contact-pill">
+                📞 <span>{t.phone}: 098-190-2677</span>
+              </a>
+              {SHOW_LINE && (
+              <a
+                href={LINE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact-pill line-pill"
+              >
+                <LineIcon size={14} />
+                <span>{t.line}: @KittyCafe</span>
+              </a>
+              )}
+              <button
+                className="theme-toggle"
+                onClick={toggleTheme}
+                aria-label="Toggle dark/light mode"
+              >
+                {theme === "dark" ? "☀️" : "🌙"}
+              </button>
+              <button
+                className="lang-toggle"
+                onClick={() => setLang(lang === "th" ? "en" : "th")}
+              >
+                {t.lang}
+              </button>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Sticky Category Nav */}
-      <nav className="cat-nav">
+        {/* Category Nav — flush below header, no gap */}
+        <nav className="cat-nav">
         <div className="cat-nav-inner">
           {menuData.map((cat) => (
             <button
@@ -383,6 +421,7 @@ export default function App() {
           ))}
         </div>
       </nav>
+      </div>{/* /sticky-top */}
 
       {/* Menu Sections */}
       <main className="menu-main">
@@ -444,8 +483,9 @@ export default function App() {
             <h3 className="footer-heading">🐱 Kitty Cafe</h3>
             <p className="footer-tagline">{t.tagline}</p>
             <div className="footer-info-row">
-              <span>📞 000-000-0000</span>
+              <span>📞 098-190-2677</span>
             </div>
+            {SHOW_LINE && (
             <div className="footer-info-row">
               <a
                 href={LINE_URL}
@@ -457,11 +497,22 @@ export default function App() {
                 <span>@KittyCafe</span>
               </a>
             </div>
+            )}
             <div className="footer-info-row">
               <span>📍 {t.address}</span>
             </div>
             <div className="footer-info-row">
               <span>🕐 {t.hours}</span>
+            </div>
+            <div className="hours-table">
+              {t.hoursData.map((row) => (
+                <div key={row.day} className={`hours-row${row.open === null ? " hours-closed" : ""}`}>
+                  <span className="hours-day">{row.day}</span>
+                  <span className="hours-time">
+                    {row.open === null ? t.closed : `${row.open} – ${row.close}`}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -470,9 +521,9 @@ export default function App() {
             <div className="map-embed">
               <iframe
                 title="Kitty Cafe Map"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3875.2930258009564!2d100.52373367507773!3d13.748688086627734!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e29ee109daaaab%3A0xf18d8500b3f17941!2sKitty%20Cafe!5e0!3m2!1sth!2sth!4v1718000000000!5m2!1sth!2sth"
+                src="https://maps.google.com/maps?q=15.6770486,103.1122792&z=16&output=embed"
                 width="100%"
-                height="200"
+                height="320"
                 style={{ border: 0, borderRadius: "12px" }}
                 allowFullScreen
                 loading="lazy"
@@ -480,7 +531,7 @@ export default function App() {
               />
             </div>
             <a
-              href="https://maps.google.com/?q=Kitty+Cafe+Thailand"
+              href="https://maps.app.goo.gl/FvZzHEtoL2BGGBZ88"
               target="_blank"
               rel="noopener noreferrer"
               className="directions-btn"

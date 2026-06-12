@@ -83,14 +83,21 @@ body {
 }
 
 /* ─────────────────────────────────────────
+   Sticky wrapper — header + nav as one unit
+───────────────────────────────────────── */
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* ─────────────────────────────────────────
    Site Header — two rows
 ───────────────────────────────────────── */
 .site-header {
   background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon) 60%, var(--maroon-mid) 100%);
-  position: sticky;
-  top: 0;
-  z-index: 100;
   box-shadow: 0 2px 20px rgba(74,17,17,0.45);
+  position: relative;
 }
 
 .site-header::before {
@@ -135,29 +142,31 @@ body {
   text-shadow: 0 1px 6px rgba(0,0,0,0.25);
 }
 
-/* Row 2: contact + toggles */
+/* Row 2: contact + toggles — never wraps */
 .header-contact {
   display: flex;
   align-items: center;
-  gap: 7px;
-  flex-wrap: wrap;
+  gap: 5px;
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 
 .contact-pill {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   background: rgba(255,255,255,0.1);
   color: rgba(255,255,255,0.9);
   border: 1px solid rgba(255,255,255,0.18);
   border-radius: var(--radius-pill);
-  padding: 4px 11px;
-  font-size: 0.73rem;
+  padding: 4px 8px;
+  font-size: 0.68rem;
   font-family: 'Sarabun', sans-serif;
   font-weight: 500;
   text-decoration: none;
   transition: background 0.2s;
   white-space: nowrap;
+  min-width: 0;
 }
 .contact-pill:hover { background: rgba(255,255,255,0.2); }
 
@@ -176,14 +185,15 @@ body {
   color: var(--maroon-dark);
   border: none;
   border-radius: var(--radius-pill);
-  padding: 4px 14px;
+  padding: 4px 9px;
   font-family: 'Sarabun', sans-serif;
-  font-size: 0.76rem;
+  font-size: 0.68rem;
   font-weight: 800;
   cursor: pointer;
   transition: opacity 0.18s, transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
   white-space: nowrap;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+  flex-shrink: 0;
 }
 .lang-toggle:hover  { opacity: 0.88; transform: scale(1.07); }
 .lang-toggle:active { transform: scale(0.94); }
@@ -196,27 +206,30 @@ body {
   background: rgba(255,255,255,0.12);
   border: 1px solid rgba(255,255,255,0.22);
   border-radius: var(--radius-pill);
-  padding: 4px 10px;
+  padding: 4px 7px;
   font-size: 0.82rem;
   cursor: pointer;
   color: rgba(255,255,255,0.9);
   font-family: 'Sarabun', sans-serif;
   transition: background 0.2s, transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
   white-space: nowrap;
-  gap: 4px;
   line-height: 1;
+  flex-shrink: 0;
 }
 .theme-toggle:hover  { background: rgba(255,255,255,0.22); transform: scale(1.07); }
 .theme-toggle:active { transform: scale(0.94); }
+
+/* On very small screens, hide text labels inside pills — keep icons only */
+@media (max-width: 400px) {
+  .contact-pill span { display: none; }
+  .contact-pill { padding: 4px 7px; gap: 0; }
+}
 
 /* ─────────────────────────────────────────
    Category Nav
 ───────────────────────────────────────── */
 .cat-nav {
   background: var(--nav-bg);
-  position: sticky;
-  top: var(--header-h, 88px);
-  z-index: 90;
   border-bottom: 1.5px solid var(--nav-border);
   box-shadow: 0 3px 14px rgba(0,0,0,0.07);
   transition: background 0.25s ease;
@@ -498,6 +511,32 @@ body {
   font-weight: 500;
 }
 .footer-line-link:hover { text-decoration: underline; }
+
+/* Hours table */
+.hours-table {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.hours-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.8);
+  padding: 2px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.hours-row.hours-closed {
+  color: rgba(255,255,255,0.35);
+}
+.hours-day {
+  font-weight: 600;
+  min-width: 80px;
+}
+.hours-time {
+  text-align: right;
+}
 
 .map-label {
   font-size: 0.74rem;
